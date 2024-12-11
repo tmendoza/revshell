@@ -1,0 +1,77 @@
+; Step 0: Set some llm settings
+(llm.config "max_tokens" 1000)
+
+; Testing variable manipulation
+(var.set "project_name" "LLM-Shell")
+(var.set "deadline" "2024-12-31")
+(var.set "team_members" ["Alice" "Bob" "Charlie"])
+(context.append (concat "Project Name: " (var.get "project_name")))
+(context.append (concat "Deadline: " (var.get "deadline")))
+(context.append (concat "Team Members: " (var.get "team_members")))
+(var.list)
+
+; Testing context manipulation
+(context.append "This is a test context entry.")
+(context.view)
+(context.clear)
+(context.append "Context after clear.")
+(context.view)
+(context.slice 0 1)
+
+; Testing templates
+(template.create "summary" "Project {project_name} is due by {deadline}.")
+(context.append (template.use "summary"))
+(template.list)
+(template.delete "summary")
+
+; Testing arithmetic operations
+(context.append (concat "Addition: " (add 5 10)))
+(context.append (concat "Subtraction: " (sub 10 5)))
+(context.append (concat "Multiplication: " (mul 2 3)))
+(context.append (concat "Division: " (div 20 4)))
+(context.view)
+
+; Testing string manipulation
+(var.set "greeting" (concat "Hello, " "world!"))
+(context.append (uppercase (var.get "greeting")))
+(context.append (lowercase (var.get "greeting")))
+(context.append (split "a,b,c,d" ","))
+(context.view)
+
+; Testing conditionals
+(var.set "condition" true)
+(context.append (if (var.get "condition") "Condition is true." "Condition is false."))
+
+; Testing loops
+(for "member" (var.get "team_members") (context.append (concat "Team Member: " (var.get "member"))))
+(context.view)
+
+; Testing system commands
+(context.append (system.info))
+(context.append (system.cwd))
+(context.append (system.disk))
+(context.append (system.time))
+(context.append "System environment variables:")
+(context.append (system.env))
+(var.set "ls_output" (system.ls))
+(context.append (var.get "ls_output"))
+(var.set "echo_output" (system.exec "echo Hello from the shell"))
+(context.append (var.get "echo_output"))
+(context.view)
+
+; Testing random number generation
+(context.append (concat "Random number: " (random 1 100)))
+
+; Testing timing
+(context.append (time (add 1 2 3 4 5)))
+
+; Testing session save and load
+(session.save "test_session.json")
+(context.clear)
+(session.load "test_session.json")
+(context.view)
+
+; Testing LLM interactions
+(context.append "Submitting context to LLM for analysis...")
+(llm.with-context "Analyze the context above and provide feedback on the project's timeline, team distribution, and any recommendations.")
+(context.view)

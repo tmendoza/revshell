@@ -1,0 +1,33 @@
+; Step 0: Set some llm settings
+(llm.config "max_tokens" 1000)
+
+; Step 1: Add user-provided variables to the context
+(var.set "project_name" "AI Research Initiative")
+(var.set "deadline" "2024-12-31")
+(var.set "team_members" ["Alice" "Bob" "Charlie"])
+
+(context.append "Project Details:")
+(context.append (concat "Project Name: " (var.get "project_name")))
+(context.append (concat "Deadline: " (var.get "deadline")))
+(context.append (concat "Team Members: " (var.get "team_members")))
+
+; Step 2: Add system information to the context
+(context.append "System Information:")
+(context.append (system.info))
+(context.append (concat "Current Directory: " (system.cwd)))
+(context.append "Disk Usage:")
+(context.append (system.disk))
+
+; Step 3: Execute a shell command and append the output
+(var.set "process_list" (system.exec "ps aux | head -n 5"))
+(context.append "Process Snapshot:")
+(context.append (var.get "process_list"))
+
+; Step 4: Add a pre-defined template to summarize context
+(template.create "context_summary" "Project: {project_name}, Deadline: {deadline}, Members: {team_members}")
+(context.append (template.use "context_summary"))
+
+; Step 5: Submit the context to the LLM for advice
+(context.append "LLM Advice:")
+
+(llm.with-context "Please analyze the above context and provide suggestions for improving operating system and config planning, resource allocation, and overall efficiency  Please format as a markdown document.")

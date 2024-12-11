@@ -1,0 +1,46 @@
+; Step 1: Set up project details
+(var.set "project_name" "AI Research Initiative")
+(var.set "deadline" "2024-12-31")
+(var.set "team_members" ["Alice" "Bob" "Charlie"])
+
+; Step 2: Add project details to the context
+(context.append "Project Details:")
+(context.append (concat "Project Name: " (var.get "project_name")))
+(context.append (concat "Deadline: " (var.get "deadline")))
+(context.append (concat "Team Members: " (var.get "team_members")))
+
+; Step 3: Add system information to the context
+(context.append "System Information:")
+(context.append (system.info))
+(context.append (concat "Current Directory: " (system.cwd)))
+(context.append "Disk Usage:")
+(context.append (system.disk))
+
+; Step 4: Execute a shell command and append the output
+(var.set "process_snapshot" (system.exec "ps aux | head -n 5"))
+(context.append "Process Snapshot:")
+(context.append (var.get "process_snapshot"))
+
+; Step 5: Create and use a template
+(template.create "summary" "Project: {project_name}, Deadline: {deadline}, Members: {team_members}")
+(context.append (template.use "summary"))
+
+; Step 6: Use LLM for advice on improving the project's operational efficiency
+(context.append "LLM Advice:")
+(llm.with-context "Analyze the project details and system configuration. Provide suggestions to improve resource allocation, operational efficiency, and planning. Format the response in markdown.")
+
+; Step 7: Save the session for future use
+(session.save "exercise_session.json")
+
+; Step 8: Reload the session to verify functionality
+(context.clear)
+(var.delete "project_name")
+(var.delete "deadline")
+(var.delete "team_members")
+(session.load "exercise_session.json")
+
+; Step 9: Verify data restoration
+(context.view)
+(var.get "project_name")
+(var.get "deadline")
+(var.get "team_members")

@@ -1,0 +1,16 @@
+; Set some variables
+(var.set "name" "Alice")
+(var.set "age" 30)
+
+; Add data to the context
+(context.append (concat "Name: " (var.get "name")))
+(context.append (concat "Age: " (var.get "age")))
+
+; Get system information
+(context.append (system.info))
+
+; Use the LLM with context
+(llm.with-context "Summarize the user's profile and system information.")
+
+; Save the session
+(session.save "profile_session.json")
